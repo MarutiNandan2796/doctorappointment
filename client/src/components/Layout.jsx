@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { CalendarHeart, Menu, ShieldCheck, Stethoscope, X } from 'lucide-react';
+import { CalendarHeart, LogOut, Menu, ShieldCheck, Stethoscope, UserCircle2, X } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -11,6 +12,7 @@ const navItems = [
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated, signOut, user } = useAuth();
 
   return (
     <div className="app-shell">
@@ -35,15 +37,61 @@ export default function Layout() {
               <ShieldCheck size={16} />
               Admin Panel
             </Link>
+            {isAuthenticated ? (
+              <div className="mobile-auth-links">
+                <span className="mobile-auth-user">
+                  <UserCircle2 size={16} />
+                  {user?.name}
+                </span>
+                <button
+                  className="btn btn-ghost"
+                  type="button"
+                  onClick={() => {
+                    signOut();
+                    setOpen(false);
+                  }}
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="mobile-auth-links">
+                <Link className="btn btn-ghost" to="/login" onClick={() => setOpen(false)}>
+                  Login
+                </Link>
+                <Link className="btn btn-primary" to="/register" onClick={() => setOpen(false)}>
+                  Create account
+                </Link>
+              </div>
+            )}
           </nav>
 
           <div className="nav-actions desktop-only">
-            <Link className="btn btn-ghost" to="/login">
-              Login
-            </Link>
-            <Link className="btn btn-primary" to="/register">
-              Create account
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="nav-user-badge">
+                  <UserCircle2 size={16} />
+                  <span>{user?.name}</span>
+                </div>
+                <button className="btn btn-ghost" type="button" onClick={signOut}>
+                  <LogOut size={16} />
+                  Logout
+                </button>
+                <Link className="btn btn-primary" to="/dashboard">
+                  Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-ghost" to="/login">
+                  Login
+                </Link>
+                <Link className="btn btn-primary" to="/register">
+                  Create account
+                </Link>
+              </>
+            )}
           </div>
 
           <button className="menu-btn mobile-only" onClick={() => setOpen((value) => !value)} aria-label="Toggle menu">
