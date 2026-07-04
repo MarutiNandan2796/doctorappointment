@@ -33,8 +33,8 @@ export function AuthProvider({ children }) {
       });
   }, []);
 
-  async function signIn({ email, password, rememberMe }) {
-    const { data } = await api.post('/auth/login', { email, password });
+  async function signIn({ email, password, rememberMe, role }) {
+    const { data } = await api.post('/auth/login', { email, password, role });
     saveAuth({ token: data.token, user: data.data }, rememberMe);
     setUser(data.data);
     setToken(data.token);
