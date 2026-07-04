@@ -22,3 +22,16 @@ export function createAppointment(req, res) {
   store.appointments.push(appointment);
   return res.status(201).json({ success: true, data: appointment });
 }
+
+export function updateAppointmentStatus(req, res) {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const appointment = store.appointments.find((item) => String(item.id) === id);
+  if (!appointment) {
+    return res.status(404).json({ success: false, message: 'Appointment not found' });
+  }
+
+  appointment.status = status;
+  return res.json({ success: true, data: appointment });
+}
