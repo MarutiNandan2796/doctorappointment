@@ -9,7 +9,8 @@ export const doctors = [
     available: true,
     rating: 4.9,
     about: 'Primary care specialist with a focus on preventive medicine and everyday health concerns.',
-    initials: 'RJ'
+    initials: 'RJ',
+    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&h=300&q=80'
   },
   {
     id: 2,
@@ -21,7 +22,8 @@ export const doctors = [
     available: true,
     rating: 4.8,
     about: 'Women\'s health specialist offering consultations, screenings, and long-term care.',
-    initials: 'EL'
+    initials: 'EL',
+    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=300&h=300&q=80'
   },
   {
     id: 3,
@@ -33,7 +35,8 @@ export const doctors = [
     available: true,
     rating: 4.9,
     about: 'Skin, hair, and acne care with modern treatment planning.',
-    initials: 'SP'
+    initials: 'SP',
+    image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=300&h=300&q=80'
   },
   {
     id: 4,
@@ -45,7 +48,8 @@ export const doctors = [
     available: false,
     rating: 4.7,
     about: 'Child healthcare and growth monitoring in a friendly, calm environment.',
-    initials: 'CL'
+    initials: 'CL',
+    image: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&h=300&q=80'
   },
   {
     id: 5,
@@ -57,7 +61,8 @@ export const doctors = [
     available: true,
     rating: 4.8,
     about: 'Neurology specialist handling headaches, migraines, and nervous system conditions.',
-    initials: 'JG'
+    initials: 'JG',
+    image: 'https://images.unsplash.com/photo-1591604021695-0c69b7c05981?auto=format&fit=crop&w=300&h=300&q=80'
   },
   {
     id: 6,
@@ -69,6 +74,7 @@ export const doctors = [
     available: true,
     rating: 4.9,
     about: 'Digestive health expert focused on long-term treatment and lifestyle recovery.',
-    initials: 'AW'
+    initials: 'AW',
+    image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=300&h=300&q=80'
   }
 ];
