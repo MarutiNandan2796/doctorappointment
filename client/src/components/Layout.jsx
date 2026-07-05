@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import { CalendarHeart, LogOut, Menu, ShieldCheck, Stethoscope, UserCircle2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import AiAssistant from './AiAssistant';
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -203,6 +204,7 @@ export default function Layout() {
         </div>
         <div className="container footer-bottom">Copyright 2026 @ Doctor Appoints</div>
       </footer>
+      <AiAssistant />
     </div>
   );
 }
