@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import doctorRoutes from './routes/doctorRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 
 const app = express();
@@ -19,6 +20,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
