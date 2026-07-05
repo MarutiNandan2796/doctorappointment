@@ -96,7 +96,7 @@ export default function DoctorLogin() {
           <Link to="/login" className="px-4 py-2 rounded-xl bg-white border border-slate-200/80 text-blue-700 font-bold hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all">
             Patient Portal &rarr;
           </Link>
-          <Link to="/admin/login" className="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-black hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          <Link to="/admin/login" className="px-4 py-2 rounded-xl bg-slate-900 !text-white font-bold hover:bg-black hover:shadow-lg hover:-translate-y-0.5 transition-all">
             Admin Console &rarr;
           </Link>
         </div>
