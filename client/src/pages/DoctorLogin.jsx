@@ -246,3 +246,5 @@ export default function DoctorLogin() {
     </section>
   );
 }
+
+// Doctor live queue stats console
