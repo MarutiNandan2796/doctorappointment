@@ -1,3 +1,5 @@
+import { store } from '../data/store.js';
+
 export async function chatWithGemini(req, res) {
   const { message, history } = req.body;
   
@@ -20,13 +22,17 @@ export async function chatWithGemini(req, res) {
     // Format history for Gemini API
     const formattedContents = [];
     
-    // System instruction prompt
+    // Format doctors from database dynamically
+    const doctorListText = store.doctors.map(d => 
+      `- Dr. ${d.name} (${d.specialty}, ${d.experience} experience, Location: ${d.location}, Fee: $${d.fee}, Status: ${d.available ? 'Available' : 'Busy'})`
+    ).join('\n');
+
+    // System instruction prompt with database content injected
     const systemPrompt = `You are Sanjivani, the helpful virtual medical and navigation assistant for the Doctor Appoints portal.
 Doctor Appoints is a clinical appointment booking application.
 
 Information about the clinic & portal:
 - Clinic Timings: Monday to Saturday, 8:00 AM – 8:00 PM. Closed on Sundays (Emergency on-call only).
-- Consultation Fees: Typically ranges between $50 to $150 per session, shown on each doctor's detail profile.
 - Navigation links:
   * Patient Portal Login: /login (for patients to log in and book appointments)
   * Patient Registration: /register (to sign up as a patient)
@@ -35,11 +41,14 @@ Information about the clinic & portal:
   * All Doctors Directory: /doctors (for browsing doctors, filtering by specialty, and reserving slots)
   * Contact Page: /contact (for user suggestions and support emails)
 
+Doctors registered in the clinic database:
+${doctorListText}
+
 Your Guidelines:
 1. Always be warm, professional, and supportive.
 2. Keep responses brief, clear, and formatted using bold markdown and paragraphs.
 3. Link to portal pages using markdown format like [Patient Portal](/login) or [All Doctors](/doctors). Make sure these paths match the navigation links above.
-4. If a user asks about booking a slot, guide them clearly to browse the [Doctors Directory](/doctors), select a doctor, and choose an available time slot.
+4. If a user asks about booking a slot or finding a doctor, guide them to browse the [Doctors Directory](/doctors) and name the specific doctors available in the database list above that match their request.
 5. If the user presents severe symptoms (e.g. chest pain, breathing difficulty, severe bleeding), urge them to immediately call emergency services or visit the nearest Emergency Room. DO NOT diagnose or provide treatment plans.`;
 
     if (history && Array.isArray(history)) {
@@ -99,8 +108,8 @@ Your Guidelines:
 
   } catch (error) {
     console.error('AI chat controller error:', error);
-    return res.status(500).json({ 
-      success: false, 
+    return res.status(200).json({ 
+      success: true, 
       error: error.message,
       text: "",
       fallback: true
