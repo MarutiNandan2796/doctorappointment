@@ -15,7 +15,25 @@ export default function AiAssistant() {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [apiStatus, setApiStatus] = useState('checking'); // 'checking', 'live', 'fallback'
   const messagesEndRef = useRef(null);
+
+  // Check connection to the Gemini API via server
+  useEffect(() => {
+    if (isOpen && apiStatus === 'checking') {
+      api.post('/ai/chat', { message: 'hello', history: [] })
+        .then((res) => {
+          if (res.data && res.data.success && !res.data.fallback) {
+            setApiStatus('live');
+          } else {
+            setApiStatus('fallback');
+          }
+        })
+        .catch(() => {
+          setApiStatus('fallback');
+        });
+    }
+  }, [isOpen, apiStatus]);
 
   const suggestions = [
     { label: '📅 How to book appointment', query: 'how to book appointment' },
@@ -37,71 +55,113 @@ export default function AiAssistant() {
 
   // Formats text into bold and link elements
   const renderMessageText = (text) => {
-    const parts = [];
-    let currentIndex = 0;
-    
-    // Match bold text **bold** and markdown links [text](path)
-    const regex = /(\*\*.*?\*\*|\[.*?\]\(.*?\))/g;
-    let match;
-    
-    while ((match = regex.exec(text)) !== null) {
-      const matchIndex = match.index;
+    if (text === undefined || text === null) return '';
+    const textStr = String(text);
+    if (!textStr.trim()) return '';
+
+    try {
+      const parts = [];
+      let currentIndex = 0;
       
-      // Push normal text preceding the match
-      if (matchIndex > currentIndex) {
-        parts.push(text.slice(currentIndex, matchIndex));
-      }
+      // Match bold text **bold** and markdown links [text](path)
+      const regex = /(\*\*.*?\*\*|\[.*?\]\(.*?\))/g;
+      let match;
       
-      const token = match[0];
-      if (token.startsWith('**') && token.endsWith('**')) {
-        const boldText = token.slice(2, -2);
-        parts.push(
-          <strong key={matchIndex} className="font-extrabold text-slate-800">
-            {boldText}
-          </strong>
-        );
-      } else if (token.startsWith('[') && token.includes('](')) {
-        const closeBracket = token.indexOf(']');
-        const linkText = token.slice(1, closeBracket);
-        const url = token.slice(closeBracket + 2, -1);
+      while ((match = regex.exec(textStr)) !== null) {
+        const matchIndex = match.index;
         
-        const isInternal = url.startsWith('/') || url.startsWith('file:///');
-        const cleanUrl = url.replace('file://', '');
-        
-        if (isInternal) {
-          parts.push(
-            <Link 
-              key={matchIndex} 
-              to={cleanUrl} 
-              onClick={() => setIsOpen(false)} 
-              className="text-teal-600 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
-            >
-              {linkText}
-            </Link>
-          );
-        } else {
-          parts.push(
-            <a 
-              key={matchIndex} 
-              href={url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-teal-600 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
-            >
-              {linkText}
-            </a>
-          );
+        // Push normal text preceding the match
+        if (matchIndex > currentIndex) {
+          parts.push(textStr.slice(currentIndex, matchIndex));
         }
+        
+        const token = match[0];
+        if (token.startsWith('**') && token.endsWith('**')) {
+          const boldText = token.slice(2, -2);
+          
+          // Nesting Link Check: If bold text contains a link [linkText](url)
+          if (boldText.startsWith('[') && boldText.includes('](')) {
+            const closeBracket = boldText.indexOf(']');
+            const linkText = boldText.slice(1, closeBracket);
+            const url = boldText.slice(closeBracket + 2, -1);
+            const isInternal = url.startsWith('/') || url.startsWith('file:///');
+            const cleanUrl = url.replace('file://', '');
+            
+            parts.push(
+              <strong key={matchIndex} className="font-extrabold text-slate-800">
+                {isInternal ? (
+                  <Link 
+                    to={cleanUrl} 
+                    onClick={() => setIsOpen(false)} 
+                    className="text-teal-600 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
+                  >
+                    {linkText}
+                  </Link>
+                ) : (
+                  <a 
+                    href={url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-teal-650 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
+                  >
+                    {linkText}
+                  </a>
+                )}
+              </strong>
+            );
+          } else {
+            parts.push(
+              <strong key={matchIndex} className="font-extrabold text-slate-800">
+                {boldText}
+              </strong>
+            );
+          }
+        } else if (token.startsWith('[') && token.includes('](')) {
+          const closeBracket = token.indexOf(']');
+          const linkText = token.slice(1, closeBracket);
+          const url = token.slice(closeBracket + 2, -1);
+          
+          const isInternal = url.startsWith('/') || url.startsWith('file:///');
+          const cleanUrl = url.replace('file://', '');
+          
+          if (isInternal) {
+            parts.push(
+              <Link 
+                key={matchIndex} 
+                to={cleanUrl} 
+                onClick={() => setIsOpen(false)} 
+                className="text-teal-600 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
+              >
+                {linkText}
+              </Link>
+            );
+          } else {
+            parts.push(
+              <a 
+                key={matchIndex} 
+                href={url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-teal-605 hover:text-teal-700 font-extrabold underline underline-offset-2 decoration-2 transition-colors"
+              >
+                {linkText}
+              </a>
+            );
+          }
+        }
+        
+        currentIndex = regex.lastIndex;
       }
       
-      currentIndex = regex.lastIndex;
+      if (currentIndex < textStr.length) {
+        parts.push(textStr.slice(currentIndex));
+      }
+      
+      return parts.length > 0 ? parts : textStr;
+    } catch (err) {
+      console.warn('Error formatting chatbot message content:', err);
+      return textStr;
     }
-    
-    if (currentIndex < text.length) {
-      parts.push(text.slice(currentIndex));
-    }
-    
-    return parts.length > 0 ? parts : text;
   };
 
   // Get AI Response logic
@@ -171,6 +231,7 @@ export default function AiAssistant() {
       });
 
       if (response.data && response.data.success && !response.data.fallback) {
+        setApiStatus('live');
         const aiMsg = {
           id: Date.now() + 1,
           sender: 'ai',
@@ -179,6 +240,7 @@ export default function AiAssistant() {
         };
         setMessages((prev) => [...prev, aiMsg]);
       } else {
+        setApiStatus('fallback');
         // Fallback to local rule-based response
         const responseText = getAIResponse(textToSend);
         const aiMsg = {
@@ -190,6 +252,7 @@ export default function AiAssistant() {
         setMessages((prev) => [...prev, aiMsg]);
       }
     } catch (error) {
+      setApiStatus('fallback');
       console.warn('AI service failed, falling back to local clinic knowledge base:', error);
       const responseText = getAIResponse(textToSend);
       const aiMsg = {
@@ -236,14 +299,17 @@ export default function AiAssistant() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 relative shadow-inner">
                 <Bot size={22} className="text-white animate-pulse" />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-white rounded-full"></span>
+                <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-white rounded-full ${apiStatus === 'live' ? 'bg-emerald-400' : apiStatus === 'fallback' ? 'bg-amber-400' : 'bg-slate-350'}`}></span>
               </div>
               <div className="text-left">
                 <h3 className="font-extrabold text-sm tracking-tight flex items-center gap-1.5">
                   Sanjivani AI Guide
                   <Sparkles size={12} className="text-teal-200 fill-teal-200 animate-bounce-slow" />
                 </h3>
-                <span className="text-[10px] text-teal-100 font-semibold tracking-wider uppercase">Portal Assistant • Online</span>
+                <span className="text-[9px] text-teal-100 font-bold tracking-wider uppercase flex items-center gap-1 mt-0.5">
+                  <span className={`w-1 h-1 rounded-full ${apiStatus === 'live' ? 'bg-emerald-400 animate-ping' : ''}`}></span>
+                  {apiStatus === 'live' ? 'Live Gemini AI' : apiStatus === 'fallback' ? 'Local Fallback Mode' : 'Connecting...'}
+                </span>
               </div>
             </div>
             <button
