@@ -428,3 +428,5 @@ export default function AiAssistant() {
     </>
   );
 }
+
+// Chatbot live status connection monitor
