@@ -229,3 +229,4 @@ export default function Home() {
 }
 
 // Live scheduler and statistics updates
+// Specialties and footer sections styling
