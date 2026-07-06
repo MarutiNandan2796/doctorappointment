@@ -227,3 +227,5 @@ export default function Home() {
     </div>
   );
 }
+
+// Live scheduler and statistics updates
