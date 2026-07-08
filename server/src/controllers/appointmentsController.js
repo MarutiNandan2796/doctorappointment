@@ -25,7 +25,7 @@ export function createAppointment(req, res) {
 
 export function updateAppointmentStatus(req, res) {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, prescription } = req.body;
 
   const appointment = store.appointments.find((item) => String(item.id) === id);
   if (!appointment) {
@@ -33,5 +33,8 @@ export function updateAppointmentStatus(req, res) {
   }
 
   appointment.status = status;
+  if (prescription) {
+    appointment.prescription = prescription;
+  }
   return res.json({ success: true, data: appointment });
 }
