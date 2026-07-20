@@ -1,8 +1,9 @@
 services:
-  # Express Backend API Service
+  # Express Backend API Service (Free Tier)
   - type: web
     name: doctorappoints-backend
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: npm run start --workspace server
     envVars:
@@ -15,7 +16,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-  # React Vite Frontend Static Site
+  # React Vite Frontend Static Site (Free Tier)
   - type: web
     name: doctorappoints-frontend
     env: static
