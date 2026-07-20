@@ -1,0 +1,26 @@
+services:
+  # Express Backend API Service
+  - type: web
+    name: doctorappoints-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm run start --workspace server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+
+  # React Vite Frontend Static Site
+  - type: web
+    name: doctorappoints-frontend
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: ./client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://doctorappoints-backend.onrender.com/api
